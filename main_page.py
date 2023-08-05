@@ -1,38 +1,38 @@
-from collections import namedtuple
-import altair as alt
-import math
-import pandas as pd
 import streamlit as st
+import requests
+import pandas as pd
 
-"""
-# Welcome to Streamlit!
+from loguru import logger
+from multiapp import MultiApp
+from apps import intro # import your app modules here
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
+st.set_page_config(
+    page_title="Elice TechOps Team Page",
+    page_icon="👋"
+)
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+st.markdown("""
+<style>
+div.stButton > button:first-child {
+background-color: #A961DC; color:white;
+}
+</style>""", unsafe_allow_html=True)
 
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+st.write("# Welcome to Elice TechOps Team! 👋")
 
+app = MultiApp()
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+st.markdown(
+    """
+    ## 엘리스 테크옵스 팀의 자동 업무 페이지입니다.
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+    > '과목 불러오기'를 통해 가져온 데이터는 '세션(session)'에 저장합니다.
+    각 작업은 기본적으로 세션에 저장된 데이터를 가져옵니다.
+    """
+)
 
-    points_per_turn = total_points / num_turns
-
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
-
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+# Add all your application here
+app.add_app("들어가며", intro.app)
+st.write("---")
+# The main app
+app.run()
