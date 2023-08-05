@@ -4,7 +4,9 @@ import pandas as pd
 
 from loguru import logger
 from multiapp import MultiApp
-from apps import intro # import your app modules here
+from apps import intro, change_course_title, update_time_info, update_course_role, \
+update_enroll_type, update_complete_cond, course_clone, schedule_lectures, \
+deauth_users, military_report # import your app modules here
 
 st.set_page_config(
     page_title="Elice TechOps Team Page",
@@ -31,8 +33,29 @@ st.markdown(
     """
 )
 
+if 'course_fetch_df' not in st.session_state:
+    st.session_state['course_fetch_df'] = pd.DataFrame()
+
+if 'origin_org_name' not in st.session_state:
+    st.session_state['origin_org_name'] = ""
+
+if 'target_org_name' not in st.session_state:
+    st.session_state['target_org_name'] = ""
+
+if 'target_org_id' not in st.session_state:
+    st.session_state['target_org_id'] = None
+
 # Add all your application here
 app.add_app("들어가며", intro.app)
+app.add_app("1️⃣ 과목명 일괄 변경하기", change_course_title.app)
+app.add_app("2️⃣ 수강기간 정보 일괄 업데이트", update_time_info.app)
+app.add_app("3️⃣ 과목 권한 일괄 업데이트", update_course_role.app)
+app.add_app("4️⃣ 과목 수강방법 일괄 업데이트", update_enroll_type.app)
+app.add_app("5️⃣ 과목 이수조건 일괄 업데이트", update_complete_cond.app)
+app.add_app("6️⃣ 과목 복제하기", course_clone.app)
+app.add_app("7️⃣ 수업 공개예약 설정하기", schedule_lectures.app)
+app.add_app("8️⃣ 구성원 일괄 인증 해제", deauth_users.app)
+app.add_app("9️⃣ 군인공지능 수료현황 리포트", military_report.app)
 st.write("---")
 # The main app
 app.run()
