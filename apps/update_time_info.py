@@ -134,11 +134,17 @@ def app():
         temp_edit_data['target_audience'] = json.dumps(temp_edit_data['target_audience'])
 
         # course_time
+        # TODO: to_change_datetime tuple to namedtuple
         temp_edit_data['begin_datetime'] = to_change_datetime[0]
         temp_edit_data['end_datetime'] = to_change_datetime[1]
-        temp_edit_data['complete_datetime'] = to_change_datetime[2]
-        temp_edit_data['enroll_begin_datetime'] = to_change_datetime[3]
-        temp_edit_data['enroll_end_datetime'] = to_change_datetime[4]
+        if len(to_change_datetime) > 4:
+            temp_edit_data['complete_datetime'] = to_change_datetime[2] 
+            temp_edit_data['enroll_begin_datetime'] = to_change_datetime[3]
+            temp_edit_data['enroll_end_datetime'] = to_change_datetime[4]
+        else:
+            del temp_edit_data['complete_datetime']
+            temp_edit_data['enroll_begin_datetime'] = to_change_datetime[2]
+            temp_edit_data['enroll_end_datetime'] = to_change_datetime[3]
 
         # https://stackoverflow.com/questions/31168819/how-to-send-an-array-using-requests-post-python-value-error-too-many-values
         logger.info("Coppied prev course data: " + json.dumps(temp_edit_data, indent = 1, ensure_ascii=False))
@@ -300,16 +306,21 @@ def app():
             else:
                 st.error('포맷에 맞춰 입력해주세요.')
 
-    comp_date_col, comp_time_col = st.columns(2)
-    with comp_date_col:
-        complete_d = st.date_input("추가 교육기간 종료 일자", datetime.date(2023, 1, 1)) # date of complete_datetime
-        st.write('추가 교육기간 종료 일자:', complete_d)
-    with comp_time_col:
-        complete_t = st.text_input('추가 교육기간 종료 일자의 시간', 
-                                value='23:59:59',
-                                placeholder='hh:mm:ss(00:00:00) 형태로 입력해주세요.')
-        hh_mm_ss_str_list = complete_t.split(':')
-        st.write('추가 교육기간 종료 일자의 시간', datetime.time(int(hh_mm_ss_str_list[0]), int(hh_mm_ss_str_list[1]), int(hh_mm_ss_str_list[2])))
+    # 추가 교육 기간 '상시' optional 반영
+    is_comp_date_avail = st.checkbox('추가 교육기간 설정 ON/OFF')
+    st.info("추가 교육기간 설정 체크박스를 OFF할 시, '종료일 없음(상시)'로 변경합니다.")
+    complete_d, complete_t = None, None
+    if is_comp_date_avail:
+        comp_date_col, comp_time_col = st.columns(2)
+        with comp_date_col:
+            complete_d = st.date_input("추가 교육기간 종료 일자", datetime.date(2023, 1, 1)) # date of complete_datetime
+            st.write('추가 교육기간 종료 일자:', complete_d)
+        with comp_time_col:
+            complete_t = st.text_input('추가 교육기간 종료 일자의 시간', 
+                                    value='23:59:59',
+                                    placeholder='hh:mm:ss(00:00:00) 형태로 입력해주세요.')
+            hh_mm_ss_str_list = complete_t.split(':')
+            st.write('추가 교육기간 종료 일자의 시간', datetime.time(int(hh_mm_ss_str_list[0]), int(hh_mm_ss_str_list[1]), int(hh_mm_ss_str_list[2])))
 
     enroll_begin_date_col, enroll_begin_time_col = st.columns(2)
     with enroll_begin_date_col:
@@ -376,23 +387,26 @@ def app():
     to_change_ts_str = (str(to_change_begin_ts_datetime), str(to_change_end_ts_datetime))
 
     # convert complete datetime
-    to_update_complete_datatime = (complete_d, complete_t)
-    logger.info(to_update_complete_datatime)
+    to_change_complete_datetime_str = None
+    to_change_complete_ts_datetime = None
+    if complete_t is not None and complete_d is not None:
+        to_update_complete_datatime = (complete_d, complete_t)
+        logger.info(to_update_complete_datatime)
 
-    complete_y_str = datetime.datetime.strftime(to_update_complete_datatime[0], '%Y')
-    complete_m_str = datetime.datetime.strftime(to_update_complete_datatime[0], '%m')
-    complete_d_str = datetime.datetime.strftime(to_update_complete_datatime[0], '%d')
+        complete_y_str = datetime.datetime.strftime(to_update_complete_datatime[0], '%Y')
+        complete_m_str = datetime.datetime.strftime(to_update_complete_datatime[0], '%m')
+        complete_d_str = datetime.datetime.strftime(to_update_complete_datatime[0], '%d')
 
-    to_change_complete_date_str = complete_y_str+'/'+complete_m_str+'/'+complete_d_str
-    to_change_complete_datetime_str = to_change_complete_date_str + ' ' + complete_t
-    logger.info("Complete datetime: " + to_change_complete_datetime_str)
+        to_change_complete_date_str = complete_y_str+'/'+complete_m_str+'/'+complete_d_str
+        to_change_complete_datetime_str = to_change_complete_date_str + ' ' + complete_t
+        logger.info("Complete datetime: " + to_change_complete_datetime_str)
 
-    # Convert date string to datetime object in GMT+9 timezone
-    complete_datetime_obj = datetime.datetime.strptime(to_change_complete_datetime_str, date_format).replace(tzinfo=datetime.timezone(datetime.timedelta(hours=9)))
+        # Convert date string to datetime object in GMT+9 timezone
+        complete_datetime_obj = datetime.datetime.strptime(to_change_complete_datetime_str, date_format).replace(tzinfo=datetime.timezone(datetime.timedelta(hours=9)))
 
-    # Convert datetime object to Unix timestamp in milliseconds
-    to_change_complete_ts_datetime = int(complete_datetime_obj.timestamp() * 1000)
-    logger.info("Complete datetime timestamp " + str(to_change_complete_ts_datetime))
+        # Convert datetime object to Unix timestamp in milliseconds
+        to_change_complete_ts_datetime = int(complete_datetime_obj.timestamp() * 1000)
+        logger.info("Complete datetime timestamp " + str(to_change_complete_ts_datetime))
 
     # convert enroll begin/end datetime
     to_update_enroll_datatime = (enroll_begin_d, enroll_begin_t, enroll_end_d, enroll_end_t)
@@ -434,7 +448,8 @@ def app():
     st.write("#### 🔽 업데이트 할 시간정보는 다음과 같습니다. 값을 확인해주세요")
     st.info("과목 교육 기간 시작일: " + to_change_begin_datetime_str)
     st.info("과목 교육 기간 종료일: " + to_change_end_datetime_str)
-    st.info("과목 추가 교육 기간 종료일: " + to_change_complete_datetime_str)
+    if to_change_complete_datetime_str:
+        st.info("과목 추가 교육 기간 종료일: " + to_change_complete_datetime_str)
     st.info("과목 수강신청 기간 시작일: " + to_change_enroll_begin_datetime_str)
     st.info("과목 수강신청 기간 종료일: " + to_change_enroll_end_datetime_str)
 
@@ -443,9 +458,14 @@ def app():
     logger.info("업데이트 하려는 수강신청 기간 정보(YYYY-MM-DD hh:mm:ss): " + to_change_enroll_begin_datetime_str + " / " +  to_change_enroll_end_datetime_str)
     logger.info("업데이트 하려는 수강신청 기간 정보(timestamp): " + ' '.join(to_change_enroll_ts_str))
 
-    to_chanage_datetimes = (to_change_begin_ts_datetime, to_change_end_ts_datetime, 
-                            to_change_complete_ts_datetime,
-                            to_change_enroll_begin_ts_datetime, to_change_enroll_end_ts_datetime) # final update datetime info
+    if to_change_complete_ts_datetime:
+        to_chanage_datetimes = (to_change_begin_ts_datetime, to_change_end_ts_datetime, 
+                                to_change_complete_ts_datetime,
+                                to_change_enroll_begin_ts_datetime, to_change_enroll_end_ts_datetime) # final update datetime info
+    else:
+        to_chanage_datetimes = (to_change_begin_ts_datetime, to_change_end_ts_datetime,
+                                to_change_enroll_begin_ts_datetime, to_change_enroll_end_ts_datetime) # final update datetime info
+        
 
     st.write('---')
 
