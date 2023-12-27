@@ -132,6 +132,7 @@ def app():
         temp_edit_data['objective'] = json.dumps(temp_edit_data['objective'])
         temp_edit_data['faq'] = json.dumps(temp_edit_data['faq'])
         temp_edit_data['target_audience'] = json.dumps(temp_edit_data['target_audience'])
+        temp_edit_data['leaderboard_info'] = json.dumps(temp_edit_data['leaderboard_info'])
 
         # course_time
         # TODO: to_change_datetime tuple to namedtuple

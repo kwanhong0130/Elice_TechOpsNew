@@ -133,6 +133,7 @@ def app():
             if response.status_code == 200:
                 # Response was successful, print the response content
                 res_json = response.json()
+                logger.info(res_json)
             else:
                 # Response was not successful, print the error message
                 print("Error: " + response.reason)
@@ -154,6 +155,7 @@ def app():
         temp_edit_data['objective'] = json.dumps(temp_edit_data['objective'])
         temp_edit_data['faq'] = json.dumps(temp_edit_data['faq'])
         temp_edit_data['target_audience'] = json.dumps(temp_edit_data['target_audience'])
+        temp_edit_data['leaderboard_info'] = json.dumps(temp_edit_data['leaderboard_info'])
 
         payload_data = {'request': json.dumps(temp_edit_data)}
 
@@ -277,7 +279,8 @@ def app():
         to_edit_df = selected_df[['과목 명', '과목 ID', '변경 과목명']]
     else: to_edit_df = pd.DataFrame()
 
-    edited_df = st.experimental_data_editor(to_edit_df, width=None)
+    # edited_df = st.experimental_data_editor(to_edit_df, width=None)
+    edited_df = st.data_editor(to_edit_df, width=None)
 
     # user report for update check
     # prev_name -> to_change_name
@@ -297,6 +300,7 @@ def app():
                 to_change_name = row['변경 과목명']
                 course_id = row['과목 ID']
                 edit_result_json = course_setting_edit_single(org_name, course_id, to_change_name, st.session_state['sessionkey'])
+                logger.info(edit_result_json)
                 logger.info(f"과목 이름 변경: {prev_course_name} -> {to_change_name}")
                 st.info(f"과목 이름 변경: {prev_course_name}:{course_id} -> {to_change_name}")  
             my_bar.empty()
