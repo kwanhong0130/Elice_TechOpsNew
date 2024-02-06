@@ -173,7 +173,7 @@ def app():
 
     org_name = st.text_input("기관 도메인 이름을 입력해주세요. 'https://______.elice.io/", key="update_course_role_org_input")
     course_list_endpoint = f"/org/{org_name}/course/list/"
-    get_user_by_email_endpoint = f"/org/{org_name}/user/get/by_email"
+    get_user_by_email_endpoint = f"/org/{org_name}/user/get/by_email/"
     logger.info(f"Current org_short_name is: {org_name}")
 
     agree = st.checkbox('과목명의 필터링 ON/OFF')
