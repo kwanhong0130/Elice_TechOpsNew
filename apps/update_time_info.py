@@ -266,7 +266,7 @@ def app():
         # initializing format
         time_format = "%H:%M:%S"
         with begin_date_col:
-            begin_d = st.date_input("교육기간 시작 일자", datetime.date(2023, 1, 1)) # date of begin_datetime 
+            begin_d = st.date_input("교육기간 시작 일자", datetime.date(2024, 1, 1)) # date of begin_datetime 
             st.write('교육기간 시작 일자:', begin_d)    
         with begin_time_col:
             begin_t = st.text_input('교육기간 시작 일자의 시간', 
@@ -288,7 +288,7 @@ def app():
 
         end_date_col, end_time_col = st.columns(2)
         with end_date_col:
-            end_d = st.date_input("교육기간 종료 일자", datetime.date(2023, 1, 1)) # date of end_datetime 
+            end_d = st.date_input("교육기간 종료 일자", datetime.date(2024, 1, 1)) # date of end_datetime 
             st.write('교육기간 종료 일자:', end_d)    
         with end_time_col:
             end_t = st.text_input('교육기간 종료 일자의 시간', 
@@ -314,7 +314,7 @@ def app():
     if is_comp_date_avail:
         comp_date_col, comp_time_col = st.columns(2)
         with comp_date_col:
-            complete_d = st.date_input("추가 교육기간 종료 일자", datetime.date(2023, 1, 1)) # date of complete_datetime
+            complete_d = st.date_input("추가 교육기간 종료 일자", datetime.date(2024, 1, 1)) # date of complete_datetime
             st.write('추가 교육기간 종료 일자:', complete_d)
         with comp_time_col:
             complete_t = st.text_input('추가 교육기간 종료 일자의 시간', 
@@ -325,7 +325,7 @@ def app():
 
     enroll_begin_date_col, enroll_begin_time_col = st.columns(2)
     with enroll_begin_date_col:
-        enroll_begin_d = st.date_input("수강 신청기간 시작 일자", datetime.date(2023, 1, 1)) # date of enroll_begin_datetime
+        enroll_begin_d = st.date_input("수강 신청기간 시작 일자", datetime.date(2024, 1, 1)) # date of enroll_begin_datetime
         st.write('수강 신청기간 시작 일자:', enroll_begin_d)
     with enroll_begin_time_col:
         enroll_begin_t = st.text_input('수강 신청기간 시작 일자의 시간', 
@@ -336,7 +336,7 @@ def app():
 
     enroll_end_date_col, enroll_end_time_col = st.columns(2)
     with enroll_end_date_col:
-        enroll_end_d = st.date_input("수강 신청기간 종료 일자", datetime.date(2023, 1, 1)) # date of enroll_end_datetime
+        enroll_end_d = st.date_input("수강 신청기간 종료 일자", datetime.date(2024, 1, 1)) # date of enroll_end_datetime
         st.write('수강 신청기간 종료 일자:', enroll_end_d)  
     with enroll_end_time_col:
         enroll_end_t = st.text_input('수강 신청기간 종료 일자의 시간', 
