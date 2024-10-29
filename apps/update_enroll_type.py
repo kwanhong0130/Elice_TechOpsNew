@@ -267,13 +267,13 @@ def app():
             selected_df['변경할 수강 방법'] = enroll_type_map[selected_enroll_type]
             to_edit_df = selected_df[['과목 명', '과목 ID', '현재 수강 방법', '변경할 수강 방법', '차감 크레딧']]
         else: to_edit_df = pd.DataFrame()
-        edited_df = st.experimental_data_editor(to_edit_df, width=None)
+        edited_df = st.data_editor(to_edit_df, width=None)
     else:
         if not selected_df.empty:
             selected_df['변경할 수강 방법'] = enroll_type_map[selected_enroll_type]
             to_edit_df = selected_df[['과목 명', '과목 ID', '현재 수강 방법', '변경할 수강 방법']]
         else: to_edit_df = pd.DataFrame()    
-        edited_df = st.experimental_data_editor(to_edit_df, width=None)
+        edited_df = st.data_editor(to_edit_df, width=None)
 
     if st.button("수강방법 업데이트 🛎"):
         if selected_enroll_type == 6:

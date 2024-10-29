@@ -150,7 +150,7 @@ def app():
         temp_edit_data['info_summary_visibility_dict'] = json.dumps(temp_edit_data['info_summary_visibility_dict'])
         temp_edit_data['preference'] = json.dumps(temp_edit_data['preference'])
         temp_edit_data['completion_info'] = json.dumps(temp_edit_data['completion_info'])
-        temp_edit_data['attend_info'] = json.dumps(temp_edit_data['attend_info'])
+        # temp_edit_data['attend_info'] = json.dumps(temp_edit_data['attend_info'])
         temp_edit_data['class_times'] = json.dumps(temp_edit_data['class_times'])
         temp_edit_data['objective'] = json.dumps(temp_edit_data['objective'])
         temp_edit_data['faq'] = json.dumps(temp_edit_data['faq'])

@@ -258,7 +258,8 @@ def app():
         selected_df['변경할 과목 권한'] = selected_role_type
         to_edit_df = selected_df[['과목 명', '과목 ID', '과목 권한', '변경할 과목 권한']]
     else: to_edit_df = pd.DataFrame()    
-    edited_df = st.experimental_data_editor(to_edit_df, width=None)
+    # edited_df = st.experimental_data_editor(to_edit_df, width=None)
+    edited_df = st.data_editor(to_edit_df, width=None)
 
     if st.button("권한 업데이트 🛎"):
         progress_text = "요청한 수강방법 업데이트를 진행중입니다. 🏄‍♂️"

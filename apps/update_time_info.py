@@ -86,7 +86,7 @@ def app():
 
         return all_course_list
 
-    def course_setting_edit_single(org_name: str, course_id: int, to_change_datetime, sessionkey: str):
+    def course_setting_edit_single(org_name: str, course_id: int, to_change_datetime, enroll_period, brushup_info, sessionkey: str):
         edit_course_setting_url = f"https://api-rest.elice.io/org/{org_name}/course/edit/"
 
         headers = {
@@ -122,17 +122,23 @@ def app():
         global_temp_course_info = _get_course_info(org_name, course_id, sessionkey)['course']
         temp_edit_data = copy.deepcopy(global_temp_course_info)
 
+        if enroll_period != '설정 안함':
+            temp_edit_data['enrolled_role_period'] = int(enroll_period[0])
+
         temp_edit_data['course_id'] = course_id
         # copy nested dict
         temp_edit_data['info_summary_visibility_dict'] = json.dumps(temp_edit_data['info_summary_visibility_dict'])
         temp_edit_data['preference'] = json.dumps(temp_edit_data['preference'])
         temp_edit_data['completion_info'] = json.dumps(temp_edit_data['completion_info'])
-        temp_edit_data['attend_info'] = json.dumps(temp_edit_data['attend_info'])
+        # temp_edit_data['attend_info'] = json.dumps(temp_edit_data['attend_info'])
         temp_edit_data['class_times'] = json.dumps(temp_edit_data['class_times'])
         temp_edit_data['objective'] = json.dumps(temp_edit_data['objective'])
         temp_edit_data['faq'] = json.dumps(temp_edit_data['faq'])
         temp_edit_data['target_audience'] = json.dumps(temp_edit_data['target_audience'])
         temp_edit_data['leaderboard_info'] = json.dumps(temp_edit_data['leaderboard_info'])
+
+        # brushup_info
+        # brushup_info: {"is_custom_period":false,"progress_limit":0.1,"period":14}
 
         # course_time
         # TODO: to_change_datetime tuple to namedtuple
@@ -262,6 +268,34 @@ def app():
     st.write('---')
     st.write('#### 3️⃣ 변경하려는 수강기간 정보(To-Update) 입력하기')
     with st.container():
+        # enrolled_role_period: 4
+        enroll_period = st.selectbox(
+                '수강생 이용기간',
+                ('설정 안함', '1주', '2주', '3주', '4주', '5주', '6주', '7주',
+                 '8주', '9주', '10주', '11주', '12주', '13주', '14주', '15주', 
+                 '16주', '17주', '18주', '19주', '20주', '21주', '22주', '23주', '24주'))
+        
+        brush_up_option_disabled = True
+
+        if enroll_period != '설정 안함':
+            is_comp_date_avail = False
+            brush_up_option_disabled = False
+
+        brushup_info = {}
+        brush_up_check = st.checkbox('복습 기간 설정', disabled=brush_up_option_disabled)
+        if brush_up_check:
+            with st.container(border=True):
+                brush_up_col1, brush_up_col2 = st.columns(2)
+                with brush_up_col1:
+                    min_progress = st.text_input(label='최소 학습 진도율')
+                with brush_up_col2:
+                    brush_up_period = st.selectbox('추가 복습 기간', ('1주', '2주', '3주', '4주'))
+                    custom_period = st.checkbox('직접 입력(일단위)')
+                if min_progress is not None:
+                    st.write(min_progress)
+                    brushup_info['progress_limit'] = int(min_progress) // 100
+                # brushup_info['period']
+
         begin_date_col, begin_time_col = st.columns(2)
         # initializing format
         time_format = "%H:%M:%S"
@@ -487,7 +521,7 @@ def app():
                 course_name = row['과목 명']
                 course_id = row['과목 ID']
                 # st.info(f"{course_name} 변경 중...🏏")
-                edit_result_json = course_setting_edit_single(org_name, course_id, to_chanage_datetimes, st.session_state['sessionkey'])
+                edit_result_json = course_setting_edit_single(org_name, course_id, to_chanage_datetimes, enroll_period, brushup_info, st.session_state['sessionkey'])
                 st.info(f"과목 시간정보 업데이트: {course_name}:{course_id}")
                 logger.info("Result json: " + json.dumps(edit_result_json, indent = 1, ensure_ascii=False))
             my_bar.empty()
