@@ -190,7 +190,8 @@ def app():
             if type(to_edit_comp_data['certificate_info']) == str:
                 # interim code
                 # after certificate/edit post, it remains json string when cert non-initialized course
-                to_edit_comp_data = json.loads(to_edit_comp_data['certificate_info'])
+                certficate_info_json = json.loads(to_edit_comp_data['certificate_info'])
+                to_edit_comp_data['certificate_info'] = certficate_info_json
             certificiate_info_dict['is_enabled'] = course_comp_data['is_certi_issue']
             to_edit_comp_data['certificate_info']['is_enabled'] = course_comp_data['is_certi_issue']
 
